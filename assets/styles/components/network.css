@@ -1,0 +1,116 @@
+/* Network Animation Styles */
+.network-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  opacity: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+#network-canvas,
+canvas[id*="network-canvas"] {
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Container para seções com network background */
+.section-with-network {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Garantir que o conteúdo fique acima das partículas */
+.section-with-network > .container,
+.section-with-network > .main-container,
+.section-with-network > .contact-container {
+  position: relative;
+  z-index: 2;
+}
+
+/* Aplicar a todas as seções principais */
+.main.section-with-network,
+.sobre.section-with-network,
+.minhas-skills.section-with-network,
+.projetos.section-with-network,
+.contact-section.section-with-network {
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+}
+
+/* Forçar visibilidade das partículas */
+.network-background {
+  background: transparent !important;
+  mix-blend-mode: normal;
+}
+
+/* Ajustes de performance */
+@media (prefers-reduced-motion: reduce) {
+  .network-background {
+    display: none;
+  }
+}
+
+/* Ajustes específicos para diferentes seções - visibilidade garantida */
+.main .network-background {
+  opacity: 0.8;
+}
+
+.sobre .network-background,
+.contact-section .network-background {
+  opacity: 0.6;
+}
+
+.minhas-skills .network-background,
+.projetos .network-background {
+  opacity: 0.7;
+}
+
+/* Tema claro - partículas mais visíveis e contrastadas */
+[data-theme="light"] .network-background {
+  opacity: 1 !important;
+}
+
+[data-theme="light"] .main .network-background {
+  opacity: 1 !important;
+}
+
+[data-theme="light"] .sobre .network-background,
+[data-theme="light"] .contact-section .network-background {
+  opacity: 0.8 !important;
+}
+
+[data-theme="light"] .minhas-skills .network-background,
+[data-theme="light"] .projetos .network-background {
+  opacity: 0.9 !important;
+}
+
+/* Reduzir complexidade em dispositivos móveis mas manter visibilidade */
+@media (max-width: 768px) {
+  .network-background {
+    opacity: 0.5 !important;
+  }
+  
+  [data-theme="light"] .network-background {
+    opacity: 0.7 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .network-background {
+    opacity: 0.3 !important;
+  }
+  
+  [data-theme="light"] .network-background {
+    opacity: 0.5 !important;
+  }
+}

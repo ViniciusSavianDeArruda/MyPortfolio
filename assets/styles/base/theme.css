@@ -1,0 +1,349 @@
+/* Sistema de Temas - Modo Claro e Escuro */
+
+/* Desabilitar transições durante troca de tema para mudança instantânea */
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Tema Escuro (Padrão) */
+:root,
+[data-theme="dark"] {
+  /* Cores de fundo */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #121212;
+  --bg-tertiary: #1a1a1a;
+  --bg-card: rgba(255, 255, 255, 0.03);
+  --bg-hover: rgba(255, 255, 255, 0.05);
+  
+  /* Cores de texto */
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.85);
+  --text-tertiary: rgba(255, 255, 255, 0.7);
+  --text-muted: rgba(255, 255, 255, 0.6);
+  
+  /* Cores de acento */
+  --accent-primary: #666666;
+  --accent-secondary: #888888;
+  --accent-hover: #999999;
+  
+  /* Bordas e divisores */
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-light: rgba(255, 255, 255, 0.05);
+  --divider: rgba(255, 255, 255, 0.08);
+  
+  /* Sombras */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.6);
+  --shadow-accent: 0 4px 20px rgba(102, 102, 102, 0.3);
+  
+  /* Overlay e backdrop */
+  --overlay: rgba(0, 0, 0, 0.7);
+  --backdrop: rgba(10, 10, 10, 0.95);
+  
+  /* Scrollbar */
+  --scrollbar-track: rgba(102, 102, 102, 0.1);
+  --scrollbar-thumb: linear-gradient(180deg, #666666, #555555);
+  --scrollbar-thumb-hover: linear-gradient(180deg, #777777, #666666);
+}
+
+/* Tema Claro */
+[data-theme="light"] {
+  /* Cores de fundo */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #e9ecef;
+  --bg-card: rgba(0, 0, 0, 0.02);
+  --bg-hover: rgba(0, 0, 0, 0.04);
+  
+  /* Cores de texto */
+  --text-primary: #1a1a1a;
+  --text-secondary: #2d3748;
+  --text-tertiary: #4a5568;
+  --text-muted: #718096;
+  
+  /* Cores de acento (mantém as mesmas para consistência da marca) */
+  --accent-primary: rgb(0, 173, 111);
+  --accent-secondary: #00a86b;
+  --accent-hover: #008c5a;
+  
+  /* Bordas e divisores */
+  --border-color: rgba(0, 0, 0, 0.12);
+  --border-light: rgba(0, 0, 0, 0.06);
+  --divider: rgba(0, 0, 0, 0.08);
+  
+  /* Sombras */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
+  --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.20);
+  --shadow-accent: 0 4px 20px rgba(0, 173, 111, 0.2);
+  
+  /* Overlay e backdrop */
+  --overlay: rgba(255, 255, 255, 0.9);
+  --backdrop: rgba(248, 249, 250, 0.95);
+  
+  /* Scrollbar */
+  --scrollbar-track: rgba(0, 173, 111, 0.08);
+  --scrollbar-thumb: linear-gradient(180deg, rgb(0, 173, 111), #00a86b);
+  --scrollbar-thumb-hover: linear-gradient(180deg, #00a86b, rgb(0, 173, 111));
+}
+
+/* Transições suaves entre temas */
+* {
+  transition: background-color 0.3s ease, 
+              color 0.3s ease, 
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
+}
+
+/* Exceções para transições (elementos que não devem ter transição) */
+*:is(img, video, iframe, svg, [data-no-transition]) {
+  transition: none;
+}
+
+/* Tema escuro - fundo preto sólido */
+[data-theme="dark"] body,
+body {
+  background: #0a0a0a !important;
+  color: var(--text-primary);
+}
+
+/* Tema claro - gradiente normal */
+[data-theme="light"] body {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 50%, #f0f0f0 100%) !important;
+}
+
+/* Forçar seções com fundo preto no tema escuro */
+[data-theme="dark"] section,
+[data-theme="dark"] .main,
+[data-theme="dark"] .sobre,
+[data-theme="dark"] .minhas-skills,
+[data-theme="dark"] .projetos,
+[data-theme="dark"] .contact-section {
+  background: #0a0a0a !important;
+}
+
+/* Scrollbar personalizada */
+body::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+body::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* Botão de alternância de tema */
+.theme-toggle {
+  position: fixed;
+  top: 90px;
+  right: 20px;
+  z-index: 1001;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-md);
+}
+
+.theme-toggle:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent-primary);
+  box-shadow: var(--shadow-accent);
+  transform: translateY(-2px);
+}
+
+.theme-toggle:active {
+  transform: translateY(0);
+}
+
+.theme-toggle .theme-icon {
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+.theme-toggle:hover .theme-icon {
+  transform: rotate(20deg);
+}
+
+.theme-toggle.pulse {
+  animation: pulse 0.3s ease;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* Responsividade para o botão de tema */
+@media (max-width: 768px) {
+  .theme-toggle {
+    top: 85px;
+    right: 15px;
+    width: 45px;
+    height: 45px;
+  }
+  
+  .theme-toggle .theme-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .theme-toggle {
+    top: 80px;
+    right: 12px;
+    width: 40px;
+    height: 40px;
+  }
+  
+  .theme-toggle .theme-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Ajustes de cores específicos para elementos */
+
+/* Cards e superfícies */
+.glass-effect,
+.project-card,
+.contact-card,
+.summary-card,
+.tech-card,
+.skill-card {
+  background: var(--bg-card) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* Header - tema escuro com fundo preto sólido */
+[data-theme="dark"] .header {
+  background: #0a0a0a !important;
+  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Header - tema claro normal */
+[data-theme="light"] .header {
+  background: var(--backdrop) !important;
+  border-bottom-color: var(--border-color) !important;
+}
+
+.logo {
+  color: var(--accent-primary) !important;
+}
+
+.menu a {
+  color: var(--text-secondary) !important;
+}
+
+.menu a:hover,
+.menu a.active {
+  color: var(--accent-secondary) !important;
+}
+
+/* Mobile menu */
+.mobile-menu-toggle span {
+  background: var(--accent-primary) !important;
+}
+
+[data-theme="light"] .menu {
+  background: var(--backdrop) !important;
+}
+
+/* Footer */
+.footer-bg {
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%) !important;
+  border-top-color: var(--border-color) !important;
+}
+
+.footer p {
+  color: var(--text-tertiary) !important;
+}
+
+/* Textos e títulos */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary) !important;
+}
+
+p {
+  color: var(--text-secondary) !important;
+}
+
+/* Botões */
+.btn-secondary {
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+.btn-secondary:hover {
+  background: var(--bg-hover) !important;
+}
+
+/* Links sociais */
+.social-link {
+  background: var(--bg-card) !important;
+  border-color: var(--border-color) !important;
+}
+
+.social-link:hover {
+  border-color: var(--accent-secondary) !important;
+}
+
+/* SVG icons no modo claro */
+[data-theme="light"] .social-link img,
+[data-theme="light"] .hero-buttons .social-link img {
+  filter: brightness(0) saturate(100%) !important;
+}
+
+[data-theme="light"] .social-link:hover img,
+[data-theme="light"] .hero-buttons .social-link:hover img {
+  filter: brightness(0) saturate(100%) !important;
+}
+
+/* Otimização de contraste para acessibilidade */
+[data-theme="light"] .download-btn,
+[data-theme="light"] .contact-btn,
+[data-theme="light"] .cta-btn {
+  box-shadow: var(--shadow-md) !important;
+}
+
+[data-theme="light"] .download-btn:hover,
+[data-theme="light"] .contact-btn:hover,
+[data-theme="light"] .cta-btn:hover {
+  box-shadow: var(--shadow-lg) !important;
+}
+
+/* Nomes dos ícones em preto no modo claro */
+[data-theme="light"] .tech-card span {
+  color: #000000 !important;
+}
+
+[data-theme="light"] .skill-name {
+  color: #000000 !important;
+}
+
+
