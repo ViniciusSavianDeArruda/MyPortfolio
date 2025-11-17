@@ -1,0 +1,31 @@
+/* Cores do Sistema */
+:root {
+  /* Cores Principais */
+  --cor-primaria: rgb(0, 173, 111);
+  --cor-secundaria: #00a86b;
+  --cor-acento: #2ee6a6;
+  
+  /* Cores Neutras */
+  --branco: #ffffff;
+  --preto: #000000;
+  --cinza-50: #f9fafb;
+  --cinza-100: #f3f4f6;
+  --cinza-200: #e5e7eb;
+  --cinza-300: #d1d5db;
+  --cinza-400: #9ca3af;
+  --cinza-500: #6b7280;
+  --cinza-600: #4b5563;
+  --cinza-700: #374151;
+  --cinza-800: #1f2937;
+  --cinza-900: #111827;
+  
+  /* Cores de Estado */
+  --sucesso: #10b981;
+  --erro: #ef4444;
+  --aviso: #f59e0b;
+  --info: #3b82f6;
+  
+  /* Gradientes */
+  --gradiente-primario: linear-gradient(135deg, var(--cor-primaria), var(--cor-secundaria));
+  --gradiente-escuro: linear-gradient(135deg, #1f2937, #111827);
+}

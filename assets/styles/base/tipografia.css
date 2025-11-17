@@ -1,0 +1,73 @@
+/* Typography System */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  /* Font Families */
+  --font-principal: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  
+  /* Font Weights */
+  --peso-leve: 300;
+  --peso-normal: 400;
+  --peso-medio: 500;
+  --peso-semi-bold: 600;
+  --peso-bold: 700;
+  --peso-extra-bold: 800;
+  
+  /* Font Sizes */
+  --texto-xs: 0.75rem;    /* 12px */
+  --texto-sm: 0.875rem;   /* 14px */
+  --texto-base: 1rem;     /* 16px */
+  --texto-lg: 1.125rem;   /* 18px */
+  --texto-xl: 1.25rem;    /* 20px */
+  --texto-2xl: 1.5rem;    /* 24px */
+  --texto-3xl: 1.875rem;  /* 30px */
+  --texto-4xl: 2.25rem;   /* 36px */
+  --texto-5xl: 3rem;      /* 48px */
+  --texto-6xl: 3.75rem;   /* 60px */
+  --texto-7xl: 4.5rem;    /* 72px */
+  
+  /* Line Heights */
+  --leading-none: 1;
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose: 2;
+}
+
+/* Typography Classes */
+body {
+  font-family: var(--font-principal);
+  font-size: var(--texto-base);
+  font-weight: var(--peso-normal);
+  line-height: var(--leading-normal);
+}
+
+.font-1-gg-b {
+  font-family: var(--font-principal);
+  font-size: var(--texto-5xl);
+  font-weight: var(--peso-extra-bold);
+  line-height: var(--leading-tight);
+}
+
+.font-1-g-b {
+  font-family: var(--font-principal);
+  font-size: var(--texto-4xl);
+  font-weight: var(--peso-bold);
+  line-height: var(--leading-tight);
+}
+
+.font-1-m-sb {
+  font-family: var(--font-principal);
+  font-size: var(--texto-2xl);
+  font-weight: var(--peso-semi-bold);
+  line-height: var(--leading-snug);
+}
+
+.font-2-lg-m {
+  font-family: var(--font-principal);
+  font-size: var(--texto-lg);
+  font-weight: var(--peso-medio);
+  line-height: var(--leading-relaxed);
+}

@@ -1,0 +1,21 @@
+/* Reset e Configurações Base */
+@import url('./base/reset.css');
+@import url('./base/cores.css');
+@import url('./base/tipografia.css');
+@import url('./base/global.css');
+@import url('./base/theme.css');
+@import url('./base/plugin.css');
+
+/* Componentes */
+@import url('./components/header.css');
+@import url('./components/main.css');
+@import url('./components/sobre.css');
+@import url('./components/skills.css');
+@import url('./components/projetos.css');
+@import url('./components/contato.css');
+@import url('./components/footer.css');
+@import url('./components/network.css');
+@import url('./components/project-enhancements.css');
+
+/* Animations */
+@import url('./animations/animations.css');

@@ -1,0 +1,113 @@
+/* Seção Sobre Estilos */
+.sobre {
+  background: var(--bg-primary);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 80px 0;
+}
+
+.sobre.section-with-network {
+  position: relative;
+  overflow: hidden;
+}
+
+.sobre-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 60px;
+  align-items: center;
+  margin-top: 40px;
+}
+
+.sobre-img {
+  position: relative;
+  text-align: center;
+}
+
+.sobre-img img {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  transition: transform 0.3s ease;
+}
+
+.sobre-img:hover img {
+  transform: scale(1.02);
+}
+
+.sobre-conteudo {
+  max-width: 600px;
+}
+
+.sobre-conteudo p {
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+
+.sobre-conteudo strong {
+  color: rgb(0, 173, 111);
+  font-weight: 600;
+}
+
+/* Download Button */
+.download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgb(0, 173, 111);
+  color: #ffffff;
+  padding: 14px 28px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+  border: none;
+  cursor: pointer;
+}
+
+.download-btn:hover {
+  background: #00a86b;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 173, 111, 0.4);
+}
+
+.download-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sobre-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    text-align: center;
+  }
+  
+  .sobre-conteudo p {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sobre {
+    padding: 60px 0;
+  }
+  
+  .sobre-conteudo p {
+    font-size: 15px;
+    margin-bottom: 16px;
+  }
+  
+  .download-btn {
+    padding: 12px 24px;
+    font-size: 15px;
+  }
+}
