@@ -1,5 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="currentColor">
-  <path d="M20 4L8 12L20 20L32 12L20 4Z" stroke="#75FB4C" stroke-width="2" fill="rgba(117, 251, 76, 0.1)"/>
-  <path d="M8 28L20 36L32 28" stroke="#75FB4C" stroke-width="2"/>
-  <path d="M8 20L20 28L32 20" stroke="#75FB4C" stroke-width="2"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#75FB4C"><path d="M286.67-224.67 240-271.33l240-240 240 240-46.67 46.66-193.33-193-193.33 193Zm0-248.66L240-520l240-240 240 240-46.67 46.67-193.33-193-193.33 193Z"/></svg>
