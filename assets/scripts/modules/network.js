@@ -18,8 +18,9 @@ class NetworkAnimation {
   }
   
   setConfigForSection(canvasId) {
-    // Configurações padrão
-    let config = {
+    // Configurações baseadas na seção e responsividade
+    const screenWidth = window.innerWidth;
+    let baseConfig = {
       maxDistance: 120,
       pointCount: 50,
       speed: 0.5
@@ -27,18 +28,35 @@ class NetworkAnimation {
     
     // Ajustar por seção
     if (canvasId.includes('sobre')) {
-      config = { maxDistance: 100, pointCount: 35, speed: 0.3 };
+      baseConfig = { maxDistance: 100, pointCount: 35, speed: 0.3 };
     } else if (canvasId.includes('skills')) {
-      config = { maxDistance: 140, pointCount: 60, speed: 0.4 };
+      baseConfig = { maxDistance: 140, pointCount: 60, speed: 0.4 };
     } else if (canvasId.includes('projetos')) {
-      config = { maxDistance: 110, pointCount: 40, speed: 0.6 };
+      baseConfig = { maxDistance: 110, pointCount: 40, speed: 0.6 };
     } else if (canvasId.includes('contato')) {
-      config = { maxDistance: 90, pointCount: 30, speed: 0.25 };
+      baseConfig = { maxDistance: 90, pointCount: 30, speed: 0.25 };
     }
     
-    this.maxDistance = config.maxDistance;
-    this.pointCount = config.pointCount;
-    this.speed = config.speed;
+    // Ajustar para responsividade
+    if (screenWidth < 480) {
+      // Mobile pequeno
+      baseConfig.pointCount = Math.floor(baseConfig.pointCount * 0.4);
+      baseConfig.maxDistance = Math.floor(baseConfig.maxDistance * 0.7);
+      baseConfig.speed *= 0.8;
+    } else if (screenWidth < 768) {
+      // Mobile
+      baseConfig.pointCount = Math.floor(baseConfig.pointCount * 0.6);
+      baseConfig.maxDistance = Math.floor(baseConfig.maxDistance * 0.8);
+      baseConfig.speed *= 0.9;
+    } else if (screenWidth < 1024) {
+      // Tablet
+      baseConfig.pointCount = Math.floor(baseConfig.pointCount * 0.8);
+      baseConfig.maxDistance = Math.floor(baseConfig.maxDistance * 0.9);
+    }
+    
+    this.maxDistance = baseConfig.maxDistance;
+    this.pointCount = baseConfig.pointCount;
+    this.speed = baseConfig.speed;
   }
   
   init() {
@@ -48,7 +66,14 @@ class NetworkAnimation {
   }
   
   bindEvents() {
-    window.addEventListener('resize', () => this.resizeCanvas());
+    // Debounce do resize para melhor performance
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        this.resizeCanvas();
+      }, 100);
+    });
     
     // Pausar animação quando não visível
     document.addEventListener('visibilitychange', () => {
@@ -85,48 +110,81 @@ class NetworkAnimation {
   
   resizeCanvas() {
     const rect = this.canvas.getBoundingClientRect();
-    this.canvas.width = rect.width * window.devicePixelRatio;
-    this.canvas.height = rect.height * window.devicePixelRatio;
-    this.canvas.style.width = rect.width + 'px';
-    this.canvas.style.height = rect.height + 'px';
+    const dpr = window.devicePixelRatio || 1;
     
-    this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    // Garantir dimensões mínimas
+    const minWidth = 300;
+    const minHeight = 200;
     
-    this.width = rect.width;
-    this.height = rect.height;
+    this.width = Math.max(rect.width, minWidth);
+    this.height = Math.max(rect.height, minHeight);
     
-    // Recriar pontos com novo tamanho
+    this.canvas.width = this.width * dpr;
+    this.canvas.height = this.height * dpr;
+    this.canvas.style.width = this.width + 'px';
+    this.canvas.style.height = this.height + 'px';
+    
+    this.ctx.scale(dpr, dpr);
+    
+    // Reconfigurar baseado no novo tamanho
+    this.setConfigForSection(this.canvasId);
+    
+    // Recriar pontos com novo tamanho e configurações
     this.createPoints();
   }
   
   createPoints() {
     this.points = [];
     
+    // Adicionar margem para evitar pontos muito na borda
+    const margin = 20;
+    const effectiveWidth = this.width - (margin * 2);
+    const effectiveHeight = this.height - (margin * 2);
+    
     for (let i = 0; i < this.pointCount; i++) {
       this.points.push({
-        x: Math.random() * this.width,
-        y: Math.random() * this.height,
+        x: margin + Math.random() * effectiveWidth,
+        y: margin + Math.random() * effectiveHeight,
         vx: (Math.random() - 0.5) * this.speed,
         vy: (Math.random() - 0.5) * this.speed,
-        size: Math.random() * 2 + 1
+        size: Math.random() * 1.5 + 0.8
       });
     }
   }
   
   updatePoints() {
+    const margin = 10;
+    
     this.points.forEach(point => {
       point.x += point.vx;
       point.y += point.vy;
       
-      // Bounce off edges
-      if (point.x < 0 || point.x > this.width) {
-        point.vx *= -1;
-        point.x = Math.max(0, Math.min(this.width, point.x));
+      // Bounce off edges com margem para evitar acumulação
+      if (point.x <= margin) {
+        point.vx = Math.abs(point.vx);
+        point.x = margin;
+      } else if (point.x >= this.width - margin) {
+        point.vx = -Math.abs(point.vx);
+        point.x = this.width - margin;
       }
       
-      if (point.y < 0 || point.y > this.height) {
-        point.vy *= -1;
-        point.y = Math.max(0, Math.min(this.height, point.y));
+      if (point.y <= margin) {
+        point.vy = Math.abs(point.vy);
+        point.y = margin;
+      } else if (point.y >= this.height - margin) {
+        point.vy = -Math.abs(point.vy);
+        point.y = this.height - margin;
+      }
+      
+      // Adicionar pequena variação para evitar padrões repetitivos
+      if (Math.random() < 0.001) {
+        point.vx += (Math.random() - 0.5) * 0.1;
+        point.vy += (Math.random() - 0.5) * 0.1;
+        
+        // Limitar velocidade máxima
+        const maxSpeed = this.speed * 2;
+        point.vx = Math.max(-maxSpeed, Math.min(maxSpeed, point.vx));
+        point.vy = Math.max(-maxSpeed, Math.min(maxSpeed, point.vy));
       }
     });
   }
@@ -234,7 +292,7 @@ class NetworkAnimation {
 // Armazenar instâncias para evitar duplicação
 window.networkInstances = window.networkInstances || {};
 
-// Função de inicialização
+// Função de inicialização mais robusta
 function initNetworkAnimations() {
   const networkCanvases = [
     'network-canvas',
@@ -246,12 +304,63 @@ function initNetworkAnimations() {
   
   networkCanvases.forEach(canvasId => {
     const canvas = document.getElementById(canvasId);
-    if (canvas && !window.networkInstances[canvasId]) {
-      window.networkInstances[canvasId] = new NetworkAnimation(canvasId);
+    if (canvas) {
+      // Destruir instância anterior se existir
+      if (window.networkInstances[canvasId]) {
+        window.networkInstances[canvasId].destroy();
+        delete window.networkInstances[canvasId];
+      }
+      
+      // Aguardar um frame para garantir que o canvas está renderizado
+      setTimeout(() => {
+        const rect = canvas.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          window.networkInstances[canvasId] = new NetworkAnimation(canvasId);
+        }
+      }, 100);
     }
   });
 }
 
+// Reinicializar após mudanças de tema
+function reinitializeNetworksOnThemeChange() {
+  // Aguardar transição do tema
+  setTimeout(() => {
+    Object.values(window.networkInstances).forEach(instance => {
+      if (instance && instance.ctx) {
+        instance.ctx.clearRect(0, 0, instance.width, instance.height);
+      }
+    });
+  }, 300);
+}
+
+// Observar mudanças de tema
+const themeObserver = new MutationObserver((mutations) => {
+  mutations.forEach((mutation) => {
+    if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
+      reinitializeNetworksOnThemeChange();
+    }
+  });
+});
+
 // Inicializar quando DOM estiver pronto
-document.addEventListener('DOMContentLoaded', initNetworkAnimations);
+document.addEventListener('DOMContentLoaded', () => {
+  initNetworkAnimations();
+  
+  // Observar mudanças de tema no documentElement
+  themeObserver.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme']
+  });
+});
+
 window.addEventListener('load', initNetworkAnimations);
+
+// Reinicializar ao redimensionar a janela (debounced)
+let reinitTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(reinitTimeout);
+  reinitTimeout = setTimeout(() => {
+    initNetworkAnimations();
+  }, 500);
+});
