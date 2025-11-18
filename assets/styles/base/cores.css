@@ -1,31 +1,42 @@
-/* Cores do Sistema */
-:root {
-  /* Cores Principais */
-  --cor-primaria: rgb(0, 173, 111);
-  --cor-secundaria: #00a86b;
-  --cor-acento: #2ee6a6;
+:root{
+  /* paleta existente */
+  --cor-0: #f9f9f9;
+  --cor-1: #a4a4a4;
+  --cor-2: #828282;
+  --cor-3: #333333;
+  --cor-4: #212121;
+  --cor-5: #171717;
+  --cor-p2: #0bbe56;
+
+  /* acentos e fundos (novos) */
+  --accent-primary: rgb(0, 173, 111);
+  --accent-secondary: #2ee6a6; /* menta/teal sutil que combina com o verde */
+  --bg-black: #0a0a0a;          /* Início / Skills */
+  --bg-deep-gray: #121212;      /* Sobre mim */
+  --bg-dark-gray: #1a1a1a;      /* Projetos */
+}
+
+.cor-0{
+  color: #ffffff;
+}
+.cor-1{
+  color: #f8f8f8;
+}
+.cor-2{
+  color: var(--accent-primary);
+  text-shadow: var(--accent-primary) 0px 0px 10px;
   
-  /* Cores Neutras */
-  --branco: #ffffff;
-  --preto: #000000;
-  --cinza-50: #f9fafb;
-  --cinza-100: #f3f4f6;
-  --cinza-200: #e5e7eb;
-  --cinza-300: #d1d5db;
-  --cinza-400: #9ca3af;
-  --cinza-500: #6b7280;
-  --cinza-600: #4b5563;
-  --cinza-700: #374151;
-  --cinza-800: #1f2937;
-  --cinza-900: #111827;
-  
-  /* Cores de Estado */
-  --sucesso: #10b981;
-  --erro: #ef4444;
-  --aviso: #f59e0b;
-  --info: #3b82f6;
-  
-  /* Gradientes */
-  --gradiente-primario: linear-gradient(135deg, var(--cor-primaria), var(--cor-secundaria));
-  --gradiente-escuro: linear-gradient(135deg, #1f2937, #111827);
+}
+.cor-3{
+  color: #333333;
+}
+.cor-4{
+  color: #212121;
+}
+.cor-5{
+  color: #171717;
+}
+
+.cor-p2{
+  color:#0bbe56;
 }

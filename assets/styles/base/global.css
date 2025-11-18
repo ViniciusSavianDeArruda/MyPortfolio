@@ -1,50 +1,291 @@
-/* Global Styles */
 html {
-  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+
+
+/* Scroll Progress Bar */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  z-index: 9998;
+}
+
+.scroll-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+  width: 0%;
+  transition: width 0.1s ease;
+  box-shadow: 0 0 10px var(--accent-primary);
 }
 
 body {
-  font-family: var(--font-principal);
-  background: var(--bg-primary);
-  color: var(--text-primary);
+  background: linear-gradient(135deg, var(--bg-black) 0%, #121212 50%, #0f0f0f 100%);
+  background-attachment: fixed;
+  font-family: "Inter", "DM Sans", sans-serif;
+  line-height: 1.6;
+  color: #ffffff;
   overflow-x: hidden;
+  position: relative;
+  padding-top: 0;
 }
 
-/* Container */
+/* Efeito de grid removido */
+
+body::-webkit-scrollbar {
+  width: 8px;
+}
+
+body::-webkit-scrollbar-track {
+  background: rgba(0, 173, 111, 0.1);
+  border-radius: 10px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgb(0, 173, 111), #0b9946);
+  border-radius: 10px;
+  border: none;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #04ff6e, rgb(0, 173, 111));
+}
+
+.gotop {
+  display: none;
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  background: linear-gradient(135deg, rgb(0, 173, 111), #0b9946);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(0, 173, 111, 0.3);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.gotop:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 25px rgba(0, 173, 111, 0.5);
+}
+
+.gotop.ativo {
+  display: flex;
+  animation: gotop 0.5s forwards;
+}
+
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
+  margin-right: auto;
+  margin-left: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 140px;
+  padding-bottom: 140px;
+  box-sizing: border-box;
+  width: 100%;
 }
 
-/* Utility Classes */
-.sr-only {
+/* Melhor responsividade geral */
+@media (max-width: 1200px) {
+  .container {
+    max-width: 100%;
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+}
+
+@media (max-width: 992px) {
+  .container {
+    padding-left: 25px;
+    padding-right: 25px;
+    padding-top: 100px;
+    padding-bottom: 100px;
+  }
+}
+
+/* Seções com espaçamento melhorado */
+section {
+  position: relative;
+  z-index: 1;
+}
+
+section::before {
+  content: "";
   position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--accent-primary),
+    transparent
+  );
+  opacity: 0.5;
 }
 
+/* Efeitos sutis atrás das seções */
+#home::after,
+#sobre::after,
+#skills::after,
+#projetos::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Animações melhoradas */
+.tech-card {
+  opacity: 0;
+  transform: translateY(20px) scale(0.9);
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.project-card {
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.project-card:hover {
+  transform: translateY(-10px) scale(1.02) !important;
+  box-shadow: 0 20px 40px rgba(0, 173, 111, 0.2) !important;
+}
+
+/* Melhorar transições dos botões */
+.btn-primary,
+.btn-secondary {
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.social-link {
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+
+
+
+
+/* Efeito de glassmorphism para cards */
 .glass-effect {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
-.gradient-text {
-  background: var(--gradiente-primario);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* Animações suaves melhoradas */
+.fade-in {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* Focus Styles */
-:focus-visible {
-  outline: 2px solid var(--cor-primaria);
-  outline-offset: 2px;
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Animações escalonadas para cards */
+.fade-in:nth-child(1) { transition-delay: 0ms; }
+.fade-in:nth-child(2) { transition-delay: 100ms; }
+.fade-in:nth-child(3) { transition-delay: 200ms; }
+.fade-in:nth-child(4) { transition-delay: 300ms; }
+.fade-in:nth-child(5) { transition-delay: 400ms; }
+.fade-in:nth-child(6) { transition-delay: 500ms; }
+
+/* Melhor responsividade */
+@media (max-width: 800px) {
+  .container {
+    padding-bottom: 60px;
+    padding-top: 60px;
+    padding-left: 20px;
+    padding-right: 20px;
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding-left: 18px;
+    padding-right: 18px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding-bottom: 40px;
+    padding-top: 40px;
+    padding-left: 16px;
+    padding-right: 16px;
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 360px) {
+  .container {
+    padding-left: 14px;
+    padding-right: 14px;
+    padding-top: 35px;
+    padding-bottom: 35px;
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@keyframes gotop {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Efeito de partículas de fundo */
+.particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Gradientes animados */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animated-gradient {
+  background: linear-gradient(-45deg, #0a0a0a, #1a1a1a, #0f0f0f, #252525);
+  background-size: 400% 400%;
+  animation: gradient-shift 15s ease infinite;
 }

@@ -1,49 +1,123 @@
-/* Reset CSS */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* Reset CSS - Normalizar estilos entre navegadores */
 
-*::before, 
+/* Box sizing */
+*,
+*::before,
 *::after {
   box-sizing: border-box;
 }
 
+/* Reset margins e paddings */
+* {
+  margin: 0;
+  padding: 0;
+}
+
+/* HTML e body */
 html {
   scroll-behavior: smooth;
+  font-size: 100%;
+}
+
+html,
+body {
+  height: 100%;
+  min-height: 100vh;
 }
 
 body {
-  line-height: 1.6;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeSpeed;
 }
 
-img, picture, video, canvas, svg {
-  display: block;
-  max-width: 100%;
-}
-
-input, button, textarea, select {
-  font: inherit;
-}
-
-p, h1, h2, h3, h4, h5, h6 {
+/* Elementos de texto */
+h1, h2, h3, h4, h5, h6 {
   overflow-wrap: break-word;
+  line-height: 1.2;
 }
 
+p, li, figcaption {
+  max-width: none;
+}
+
+/* Listas */
 ul, ol {
   list-style: none;
 }
 
+/* Links */
 a {
   text-decoration: none;
   color: inherit;
 }
 
-button {
+a:not([class]) {
+  text-decoration-skip-ink: auto;
+}
+
+/* Imagens */
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Formulários */
+input, button, textarea, select {
+  font: inherit;
   border: none;
-  background: none;
+  outline: none;
+}
+
+button {
   cursor: pointer;
+  background: none;
+}
+
+/* Tabelas */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* Remover outline padrão mas manter acessibilidade */
+:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Scrollbar customizada */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Seleção de texto */
+::selection {
+  background-color: rgba(0, 173, 111, 0.2);
+  color: inherit;
+}
+
+::-moz-selection {
+  background-color: rgba(0, 173, 111, 0.2);
+  color: inherit;
 }

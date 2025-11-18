@@ -26,9 +26,9 @@ html.theme-transitioning *::after {
   --text-muted: rgba(255, 255, 255, 0.6);
   
   /* Cores de acento */
-  --accent-primary: #666666;
-  --accent-secondary: #888888;
-  --accent-hover: #999999;
+  --accent-primary: rgb(0, 173, 111);
+  --accent-secondary: #2ee6a6;
+  --accent-hover: #00a86b;
   
   /* Bordas e divisores */
   --border-color: rgba(255, 255, 255, 0.1);
@@ -40,24 +40,24 @@ html.theme-transitioning *::after {
   --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
   --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.6);
-  --shadow-accent: 0 4px 20px rgba(102, 102, 102, 0.3);
+  --shadow-accent: 0 4px 20px rgba(0, 173, 111, 0.3);
   
   /* Overlay e backdrop */
   --overlay: rgba(0, 0, 0, 0.7);
   --backdrop: rgba(10, 10, 10, 0.95);
   
   /* Scrollbar */
-  --scrollbar-track: rgba(102, 102, 102, 0.1);
-  --scrollbar-thumb: linear-gradient(180deg, #666666, #555555);
-  --scrollbar-thumb-hover: linear-gradient(180deg, #777777, #666666);
+  --scrollbar-track: rgba(0, 173, 111, 0.1);
+  --scrollbar-thumb: linear-gradient(180deg, rgb(0, 173, 111), #0b9946);
+  --scrollbar-thumb-hover: linear-gradient(180deg, #04ff6e, rgb(0, 173, 111));
 }
 
 /* Tema Claro */
 [data-theme="light"] {
   /* Cores de fundo */
   --bg-primary: #ffffff;
-  --bg-secondary: #f8f9fa;
-  --bg-tertiary: #e9ecef;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #ffffff;
   --bg-card: rgba(0, 0, 0, 0.02);
   --bg-hover: rgba(0, 0, 0, 0.04);
   
@@ -107,26 +107,15 @@ html.theme-transitioning *::after {
   transition: none;
 }
 
-/* Tema escuro - fundo preto sólido */
-[data-theme="dark"] body,
+/* Aplicar cores do tema no body */
 body {
-  background: #0a0a0a !important;
+  background: var(--bg-primary);
   color: var(--text-primary);
 }
 
-/* Tema claro - gradiente normal */
+/* Fundo branco simples no modo claro */
 [data-theme="light"] body {
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 50%, #f0f0f0 100%) !important;
-}
-
-/* Forçar seções com fundo preto no tema escuro */
-[data-theme="dark"] section,
-[data-theme="dark"] .main,
-[data-theme="dark"] .sobre,
-[data-theme="dark"] .minhas-skills,
-[data-theme="dark"] .projetos,
-[data-theme="dark"] .contact-section {
-  background: #0a0a0a !important;
+  background: #ffffff !important;
 }
 
 /* Scrollbar personalizada */
@@ -240,14 +229,8 @@ body::-webkit-scrollbar-thumb:hover {
   border-color: var(--border-color) !important;
 }
 
-/* Header - tema escuro com fundo preto sólido */
-[data-theme="dark"] .header {
-  background: #0a0a0a !important;
-  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-/* Header - tema claro normal */
-[data-theme="light"] .header {
+/* Header */
+.header {
   background: var(--backdrop) !important;
   border-bottom-color: var(--border-color) !important;
 }

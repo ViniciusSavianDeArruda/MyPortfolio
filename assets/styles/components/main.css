@@ -3,37 +3,36 @@
   min-height: 100vh;
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: 0 20px;
   position: relative;
   overflow: hidden;
-  justify-content: center;
-}
-
-.main.section-with-network {
-  background: var(--bg-primary);
 }
 
 .main-container {
   width: 100%;
-  margin: 0;
+  max-width: 1200px;
+  margin: 0 auto;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
   height: 100%;
-  padding-top: 80px;
+  padding: 60px 20px 0;
 }
 
 .hero-content {
   z-index: 2;
   text-align: center;
-  max-width: 800px;
+  max-width: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transform: translateY(-50px);
+  padding: 0 20px;
+  width: 100%;
+  overflow-x: auto;
 }
 
 .hero-greeting {
@@ -41,7 +40,9 @@
   font-weight: 400;
   color: var(--text-primary);
   margin-bottom: 20px;
-  line-height: 1.2;
+  line-height: 1.1;
+  text-align: center;
+  width: 100%;
   white-space: nowrap;
 }
 
@@ -54,30 +55,35 @@
   font-size: clamp(24px, 5vw, 32px);
   font-weight: 500;
   color: rgb(0, 173, 111) !important;
-  margin-bottom: 28px;
-  line-height: 1.3;
+  margin-bottom: 32px;
+  line-height: 1.2;
   text-shadow: 0 0 20px rgba(0, 173, 111, 0.3);
+  text-align: center;
+  width: 100%;
+  white-space: nowrap;
 }
 
 .hero-description {
   font-size: 20px;
-  line-height: 1.6;
+  line-height: 1.5;
   color: var(--text-secondary);
-  margin-bottom: 40px;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto 48px;
+  max-width: 100%;
+  text-align: center;
+  padding: 0 20px;
   white-space: nowrap;
 }
 
 /* Hero CTA Buttons */
 .hero-buttons {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   justify-content: center;
   align-items: center;
-  margin-bottom: 120px;
+  margin: 0 auto 120px;
   flex-wrap: nowrap;
+  width: 100%;
+  max-width: 500px;
 }
 
 .btn-primary {
@@ -204,16 +210,7 @@
   filter: brightness(0) invert(1) drop-shadow(0 0 10px rgba(46, 230, 166, 0.8));
 }
 
-/* Ícones pretos no tema claro */
-[data-theme="light"] .hero-buttons .social-link img,
-[data-theme="light"] .social-link img {
-  filter: brightness(0) saturate(100%) !important;
-}
 
-[data-theme="light"] .hero-buttons .social-link:hover img,
-[data-theme="light"] .social-link:hover img {
-  filter: brightness(0) saturate(100%) !important;
-}
 
 /* Efeito de digitação melhorado */
 #typing-text {
@@ -237,10 +234,9 @@
 /* Scroll Indicator */
 .scroll-indicator {
   position: absolute;
-  bottom: 140px;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
+  bottom: 150px;
+  left: 48%;
+  transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -248,7 +244,6 @@
   animation: fadeInUp 1s ease-out 2s both;
   z-index: 10;
   text-align: center;
-  width: fit-content;
 }
 
 .scroll-indicator p {
@@ -345,17 +340,21 @@
   }
   
   .main-container {
-    padding: 60px 10px 0;
+    padding: 100px 15px 0;
+    max-width: 100%;
   }
   
   .hero-content {
-    transform: translateY(-30px);
+    padding: 0 15px;
+    max-width: 100%;
   }
   
   .hero-greeting {
     font-size: clamp(36px, 8vw, 54px);
-    white-space: normal;
     line-height: 1.1;
+    text-align: center;
+    margin-bottom: 24px;
+    white-space: nowrap;
   }
   
   .hero-role {
@@ -363,18 +362,22 @@
   }
   
   .hero-description {
-    font-size: 16px;
-    white-space: normal;
+    font-size: 18px;
     line-height: 1.5;
-    margin-bottom: 32px;
+    margin-bottom: 36px;
+    text-align: center;
+    padding: 0 15px;
+    white-space: nowrap;
   }
   
   .hero-buttons {
-    gap: 12px;
-    margin-bottom: 40px;
+    gap: 14px;
+    margin: 0 auto 40px;
     flex-wrap: nowrap;
     justify-content: center;
     align-items: center;
+    width: 100%;
+    max-width: 400px;
   }
   
   .btn-primary {
@@ -410,11 +413,14 @@
   }
   
   .hero-buttons {
-    gap: 6px;
+    gap: 10px;
     flex-direction: row;
     justify-content: center;
     align-items: center;
     flex-wrap: nowrap;
+    margin: 0 auto 25px;
+    width: 100%;
+    max-width: 300px;
   }
   
   .btn-primary {
@@ -439,7 +445,7 @@
   
   .hero-greeting {
     font-size: clamp(28px, 7vw, 42px);
-    white-space: normal;
+    white-space: nowrap;
     line-height: 1.1;
     margin-bottom: 16px;
   }
@@ -450,11 +456,12 @@
   }
   
   .hero-description {
-    font-size: 14px;
-    white-space: normal;
+    font-size: 16px;
     line-height: 1.4;
-    margin-bottom: 28px;
-    padding: 0 5px;
+    margin-bottom: 32px;
+    padding: 0 10px;
+    text-align: center;
+    white-space: nowrap;
   }
   
   .hero-buttons {
@@ -488,9 +495,14 @@
 @media (max-width: 480px) {
   .main {
     padding: 20px 15px;
-    min-height: auto;
-    padding-top: 100px;
-    padding-bottom: 50px;
+    min-height: 100vh;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .main-container {
+    padding: 80px 15px 0;
+    max-width: 100%;
   }
   
 
@@ -499,14 +511,20 @@
   
   .hero-content {
     text-align: center;
+    padding: 0 20px;
+    max-width: 100%;
+    width: 100%;
   }
   
   .hero-buttons {
-    gap: 8px;
+    gap: 12px;
     flex-direction: row;
     justify-content: center;
     align-items: center;
     flex-wrap: nowrap;
+    margin: 0 auto 30px;
+    width: 100%;
+    max-width: 350px;
   }
   
   .btn-primary,
@@ -519,10 +537,12 @@
   }
   
   .hero-description {
-    font-size: 14px;
-    line-height: 1.5;
-    margin-bottom: 20px;
+    font-size: 15px;
+    line-height: 1.4;
+    margin-bottom: 24px;
     padding: 0 10px;
+    text-align: center;
+    white-space: nowrap;
   }
   
   .social-link {
@@ -544,9 +564,21 @@
 @media (max-width: 360px) {
   .main {
     padding: 15px 12px;
-    min-height: auto;
-    padding-top: 90px;
-    padding-bottom: 40px;
+    min-height: 100vh;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .main-container {
+    padding: 60px 12px 0;
+    max-width: 100%;
+  }
+  
+  .hero-content {
+    padding: 0 15px;
+    max-width: 100%;
+    width: 100%;
+    text-align: center;
   }
   
 
@@ -590,12 +622,12 @@
   
   .main-container {
     max-width: 1400px;
-    padding-top: 100px;
+    padding: 80px 40px 0;
   }
   
   .hero-content {
-    max-width: 900px;
-    transform: translateY(-60px);
+    max-width: 1000px;
+    padding: 0 40px;
   }
   
   .hero-greeting {
@@ -613,8 +645,12 @@
   }
   
   .hero-buttons {
-    gap: 16px;
-    margin-bottom: 140px;
+    gap: 20px;
+    margin: 0 auto 140px;
+    width: 100%;
+    max-width: 600px;
+    justify-content: center;
+    align-items: center;
   }
   
   .btn-primary {

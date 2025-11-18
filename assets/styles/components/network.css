@@ -75,23 +75,13 @@ canvas[id*="network-canvas"] {
   opacity: 0.7;
 }
 
-/* Tema claro - partículas mais visíveis e contrastadas */
+/* Tema claro - partículas mais visíveis */
 [data-theme="light"] .network-background {
-  opacity: 1 !important;
+  opacity: 0.9 !important;
 }
 
 [data-theme="light"] .main .network-background {
   opacity: 1 !important;
-}
-
-[data-theme="light"] .sobre .network-background,
-[data-theme="light"] .contact-section .network-background {
-  opacity: 0.8 !important;
-}
-
-[data-theme="light"] .minhas-skills .network-background,
-[data-theme="light"] .projetos .network-background {
-  opacity: 0.9 !important;
 }
 
 /* Reduzir complexidade em dispositivos móveis mas manter visibilidade */
