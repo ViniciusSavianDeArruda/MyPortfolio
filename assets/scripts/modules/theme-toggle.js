@@ -1,97 +1,121 @@
+// Theme Toggle System
 class ThemeToggle {
   constructor() {
-    this.button = document.getElementById('theme-toggle');
-    this.currentTheme = this.getStoredTheme() || this.getPreferredTheme();
-    
+    this.button = document.querySelector('.theme-toggle');
+    this.currentTheme = 'dark';
     this.init();
   }
 
   init() {
-    // Set initial theme
-    this.setTheme(this.currentTheme);
+    // Carregar tema salvo ou usar padrão
+    this.loadSavedTheme();
     
-    // Add click event listener
-    if (this.button) {
-      this.button.addEventListener('click', () => {
-        this.toggleTheme();
-      });
+    // Criar botão se não existir
+    if (!this.button) {
+      this.createToggleButton();
     }
+    
+    this.bindEvents();
+    this.updateIcon();
+  }
 
-    // Listen for system theme changes
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-      if (!this.getStoredTheme()) {
-        this.setTheme(e.matches ? 'dark' : 'light');
-      }
+  createToggleButton() {
+    const button = document.createElement('button');
+    button.className = 'theme-toggle';
+    button.innerHTML = `
+      <span class="theme-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
+          <line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </span>
+    `;
+    
+    document.body.appendChild(button);
+    this.button = button;
+  }
+
+  bindEvents() {
+    this.button.addEventListener('click', () => {
+      this.toggleTheme();
     });
   }
 
-  getPreferredTheme() {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
-
-  getStoredTheme() {
-    return localStorage.getItem('theme');
-  }
-
-  setStoredTheme(theme) {
-    localStorage.setItem('theme', theme);
-  }
-
-  setTheme(theme) {
-    // Add transition class to prevent flickering
-    document.documentElement.classList.add('theme-transitioning');
-    
-    // Set the theme
-    document.documentElement.setAttribute('data-theme', theme);
-    this.currentTheme = theme;
-    
-    // Update button icon if needed
-    this.updateButtonIcon(theme);
-    
-    // Add pulse effect
-    if (this.button) {
-      this.button.classList.add('pulse');
-      setTimeout(() => {
-        this.button.classList.remove('pulse');
-      }, 300);
-    }
-    
-    // Remove transition class after a short delay
-    setTimeout(() => {
-      document.documentElement.classList.remove('theme-transitioning');
-    }, 50);
-    
-    // Store theme preference
-    this.setStoredTheme(theme);
-    
-    // Emit custom event for other components
-    window.dispatchEvent(new CustomEvent('themeChanged', {
-      detail: { theme }
-    }));
+  loadSavedTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    this.setTheme(savedTheme);
   }
 
   toggleTheme() {
     const newTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
     this.setTheme(newTheme);
+    
+    // Animação do botão
+    this.button.classList.add('pulse');
+    setTimeout(() => {
+      this.button.classList.remove('pulse');
+    }, 300);
   }
 
-  updateButtonIcon(theme) {
-    if (!this.button) return;
+  setTheme(theme) {
+    this.currentTheme = theme;
     
-    const icon = this.button.querySelector('.theme-icon svg');
-    if (!icon) return;
+    // Aplicar classe de transição
+    document.documentElement.classList.add('theme-transitioning');
+    
+    // Definir atributo do tema
+    document.documentElement.setAttribute('data-theme', theme);
+    
+    // Salvar preferência
+    localStorage.setItem('theme', theme);
+    
+    // Atualizar ícone
+    this.updateIcon();
+    
+    // Remover classe de transição
+    setTimeout(() => {
+      document.documentElement.classList.remove('theme-transitioning');
+    }, 300);
+  }
 
-    // You could update the icon here if needed
-    // For now, we'll just add a rotation effect
-    if (theme === 'light') {
-      icon.style.transform = 'rotate(180deg)';
+  updateIcon() {
+    const icon = this.button.querySelector('.theme-icon svg');
+    
+    if (this.currentTheme === 'light') {
+      // Ícone de lua para tema claro
+      icon.innerHTML = `
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" fill="none"/>
+      `;
     } else {
-      icon.style.transform = 'rotate(0deg)';
+      // Ícone de sol para tema escuro
+      icon.innerHTML = `
+        <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2" fill="none"/>
+        <line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      `;
     }
   }
 }
 
-// Initialize theme toggle when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-  new ThemeToggle();
-});
+// Função de inicialização
+function initThemeToggle() {
+  if (!window.themeToggleInstance) {
+    window.themeToggleInstance = new ThemeToggle();
+  }
+}
+
+// Inicializar
+document.addEventListener('DOMContentLoaded', initThemeToggle);

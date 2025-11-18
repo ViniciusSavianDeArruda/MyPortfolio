@@ -1,175 +1,118 @@
+// Carousel System
 class Carousel {
-  constructor(selector, options = {}) {
-    this.carousel = document.querySelector(selector);
-    if (!this.carousel) return;
-
-    this.options = {
-      autoplay: options.autoplay || false,
-      autoplaySpeed: options.autoplaySpeed || 3000,
-      dots: options.dots || false,
-      arrows: options.arrows || false,
-      ...options
-    };
-
-    this.currentIndex = 0;
-    this.items = [];
-    this.autoplayTimer = null;
-
+  constructor(container) {
+    this.container = container;
+    this.track = container.querySelector('.carousel-track');
+    this.slides = container.querySelectorAll('.projeto-slide');
+    this.prevBtn = container.querySelector('.carousel-btn.prev');
+    this.nextBtn = container.querySelector('.carousel-btn.next');
+    
+    this.currentSlide = 0;
+    this.totalSlides = this.slides.length;
+    
     this.init();
   }
 
   init() {
-    this.items = Array.from(this.carousel.querySelectorAll('.carousel-item'));
-    if (this.items.length === 0) return;
-
+    if (!this.track || this.totalSlides === 0) return;
+    
     this.setupCarousel();
     this.bindEvents();
-
-    if (this.options.autoplay) {
-      this.startAutoplay();
-    }
+    this.updateCarousel();
   }
 
   setupCarousel() {
-    this.carousel.classList.add('carousel-initialized');
+    // Configurar largura do track
+    this.track.style.width = `${this.totalSlides * 100}%`;
     
-    // Show first item
-    this.showItem(0);
-
-    // Create dots if enabled
-    if (this.options.dots) {
-      this.createDots();
-    }
-
-    // Create arrows if enabled
-    if (this.options.arrows) {
-      this.createArrows();
-    }
-  }
-
-  showItem(index) {
-    // Hide all items
-    this.items.forEach((item, i) => {
-      item.classList.toggle('active', i === index);
+    // Configurar largura dos slides
+    this.slides.forEach(slide => {
+      slide.style.width = `${100 / this.totalSlides}%`;
     });
-
-    this.currentIndex = index;
-
-    // Update dots
-    const dots = this.carousel.querySelectorAll('.carousel-dot');
-    dots.forEach((dot, i) => {
-      dot.classList.toggle('active', i === index);
-    });
-  }
-
-  nextItem() {
-    const nextIndex = (this.currentIndex + 1) % this.items.length;
-    this.showItem(nextIndex);
-  }
-
-  prevItem() {
-    const prevIndex = this.currentIndex === 0 ? this.items.length - 1 : this.currentIndex - 1;
-    this.showItem(prevIndex);
-  }
-
-  goToItem(index) {
-    if (index >= 0 && index < this.items.length) {
-      this.showItem(index);
-    }
-  }
-
-  createDots() {
-    const dotsContainer = document.createElement('div');
-    dotsContainer.className = 'carousel-dots';
-
-    this.items.forEach((_, index) => {
-      const dot = document.createElement('button');
-      dot.className = 'carousel-dot';
-      dot.setAttribute('data-index', index);
-      dotsContainer.appendChild(dot);
-    });
-
-    this.carousel.appendChild(dotsContainer);
-  }
-
-  createArrows() {
-    const prevArrow = document.createElement('button');
-    prevArrow.className = 'carousel-arrow carousel-arrow--prev';
-    prevArrow.innerHTML = '&#8249;';
-
-    const nextArrow = document.createElement('button');
-    nextArrow.className = 'carousel-arrow carousel-arrow--next';
-    nextArrow.innerHTML = '&#8250;';
-
-    this.carousel.appendChild(prevArrow);
-    this.carousel.appendChild(nextArrow);
   }
 
   bindEvents() {
-    // Dot navigation
-    this.carousel.addEventListener('click', (e) => {
-      if (e.target.classList.contains('carousel-dot')) {
-        const index = parseInt(e.target.getAttribute('data-index'));
-        this.goToItem(index);
-        this.resetAutoplay();
-      }
-
-      if (e.target.classList.contains('carousel-arrow--prev')) {
-        this.prevItem();
-        this.resetAutoplay();
-      }
-
-      if (e.target.classList.contains('carousel-arrow--next')) {
-        this.nextItem();
-        this.resetAutoplay();
-      }
-    });
-
-    // Pause autoplay on hover
-    this.carousel.addEventListener('mouseenter', () => {
-      this.pauseAutoplay();
-    });
-
-    this.carousel.addEventListener('mouseleave', () => {
-      if (this.options.autoplay) {
-        this.startAutoplay();
-      }
-    });
-  }
-
-  startAutoplay() {
-    if (this.autoplayTimer) {
-      clearInterval(this.autoplayTimer);
+    // Botões de navegação
+    if (this.prevBtn) {
+      this.prevBtn.addEventListener('click', () => this.prevSlide());
     }
-
-    this.autoplayTimer = setInterval(() => {
-      this.nextItem();
-    }, this.options.autoplaySpeed);
-  }
-
-  pauseAutoplay() {
-    if (this.autoplayTimer) {
-      clearInterval(this.autoplayTimer);
-      this.autoplayTimer = null;
+    
+    if (this.nextBtn) {
+      this.nextBtn.addEventListener('click', () => this.nextSlide());
     }
+    
+    // Touch/swipe support
+    let startX = 0;
+    let isDragging = false;
+    
+    this.container.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+      isDragging = true;
+    });
+    
+    this.container.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      e.preventDefault();
+    });
+    
+    this.container.addEventListener('touchend', (e) => {
+      if (!isDragging) return;
+      
+      const endX = e.changedTouches[0].clientX;
+      const diff = startX - endX;
+      
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) {
+          this.nextSlide();
+        } else {
+          this.prevSlide();
+        }
+      }
+      
+      isDragging = false;
+    });
   }
 
-  resetAutoplay() {
-    if (this.options.autoplay) {
-      this.pauseAutoplay();
-      this.startAutoplay();
+  nextSlide() {
+    this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+    this.updateCarousel();
+  }
+
+  prevSlide() {
+    this.currentSlide = this.currentSlide === 0 ? this.totalSlides - 1 : this.currentSlide - 1;
+    this.updateCarousel();
+  }
+
+  updateCarousel() {
+    const translateX = -this.currentSlide * (100 / this.totalSlides);
+    this.track.style.transform = `translateX(${translateX}%)`;
+    
+    // Atualizar estado dos botões
+    this.updateButtons();
+  }
+
+  updateButtons() {
+    if (this.prevBtn) {
+      this.prevBtn.disabled = this.currentSlide === 0;
     }
-  }
-
-  destroy() {
-    this.pauseAutoplay();
-    // Remove event listeners and clean up
+    
+    if (this.nextBtn) {
+      this.nextBtn.disabled = this.currentSlide === this.totalSlides - 1;
+    }
   }
 }
 
-// Auto-initialize carousels with default options
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.carousel').forEach(carousel => {
-    new Carousel(`#${carousel.id}` || '.carousel');
+// Função de inicialização do carousel
+function initCarousel() {
+  const containers = document.querySelectorAll('.carousel-container, .projeto-carousel, .project-carousel');
+  containers.forEach(container => {
+    if (!container.dataset.carouselInitialized) {
+      container.dataset.carouselInitialized = 'true';
+      new Carousel(container);
+    }
   });
-});
+}
+
+// Inicializar carrosseis
+document.addEventListener('DOMContentLoaded', initCarousel);
+window.addEventListener('load', initCarousel);

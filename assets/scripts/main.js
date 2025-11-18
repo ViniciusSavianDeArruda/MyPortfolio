@@ -1,298 +1,259 @@
-// Main Portfolio JavaScript
-class Portfolio {
-  constructor() {
-    this.init();
-  }
+// Inicialização das animações - removido para evitar conflitos
+// As funções de inicialização são chamadas automaticamente pelos módulos
 
-  init() {
-    this.setupMobileMenu();
-    this.setupTypingEffect();
-    this.setupSmoothScrolling();
-    this.setupActiveNavigation();
-    this.setupSkillsToggle();
-    this.setupFormHandler();
-    this.updateCurrentYear();
-  }
+// Página carregada
+window.addEventListener('load', () => {
+  document.body.classList.add('loaded');
+});
 
-  // Mobile Menu Toggle
-  setupMobileMenu() {
-    const mobileToggle = document.querySelector('.mobile-menu-toggle');
-    const menu = document.querySelector('.menu');
+// Scroll Progress Bar
+const scrollProgressBar = document.querySelector('.scroll-progress-bar');
+if (scrollProgressBar) {
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrollPercentage = (scrollTop / scrollHeight) * 100;
+    scrollProgressBar.style.width = scrollPercentage + '%';
+  });
+}
 
-    if (mobileToggle && menu) {
-      mobileToggle.addEventListener('click', () => {
-        mobileToggle.classList.toggle('active');
-        menu.classList.toggle('active');
-      });
+// Botão "Mostrar Todas" as tecnologias
+const showAllBtn = document.getElementById('show-all-tech');
+const hiddenTechs = document.querySelectorAll('.hidden-tech');
+let isExpanded = false;
 
-      // Close menu when clicking on menu items
-      menu.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-          mobileToggle.classList.remove('active');
-          menu.classList.remove('active');
-        });
-      });
-
-      // Close menu when clicking outside
-      document.addEventListener('click', (e) => {
-        if (!mobileToggle.contains(e.target) && !menu.contains(e.target)) {
-          mobileToggle.classList.remove('active');
-          menu.classList.remove('active');
-        }
-      });
-    }
-  }
-
-  // Typing Effect for Hero Section
-  setupTypingEffect() {
-    const typingElement = document.getElementById('typing-text');
-    if (!typingElement) return;
-
-    const phrases = [
-      'Front-end Developer',
-      'Web Developer',
-      'UI/UX Enthusiast',
-      'JavaScript Developer'
-    ];
-
-    let currentPhraseIndex = 0;
-    let currentCharIndex = 0;
-    let isDeleting = false;
-
-    const typeSpeed = 100;
-    const deleteSpeed = 50;
-    const pauseTime = 2000;
-
-    function type() {
-      const currentPhrase = phrases[currentPhraseIndex];
-      
-      if (isDeleting) {
-        typingElement.textContent = currentPhrase.substring(0, currentCharIndex - 1);
-        currentCharIndex--;
+if (showAllBtn) {
+  showAllBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    isExpanded = !isExpanded;
+    
+    hiddenTechs.forEach((tech, index) => {
+      if (isExpanded) {
+        setTimeout(() => {
+          tech.classList.add('show');
+        }, index * 50);
       } else {
-        typingElement.textContent = currentPhrase.substring(0, currentCharIndex + 1);
-        currentCharIndex++;
+        tech.classList.remove('show');
       }
-
-      let speed = isDeleting ? deleteSpeed : typeSpeed;
-
-      if (!isDeleting && currentCharIndex === currentPhrase.length) {
-        speed = pauseTime;
-        isDeleting = true;
-      } else if (isDeleting && currentCharIndex === 0) {
-        isDeleting = false;
-        currentPhraseIndex = (currentPhraseIndex + 1) % phrases.length;
-      }
-
-      setTimeout(type, speed);
-    }
-
-    // Start typing effect after a delay
-    setTimeout(type, 1000);
-  }
-
-  // Smooth Scrolling for Navigation Links
-  setupSmoothScrolling() {
-    document.querySelectorAll('a[href^="#"]').forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        
-        const targetId = link.getAttribute('href');
-        const targetElement = document.querySelector(targetId);
-        
-        if (targetElement) {
-          const headerHeight = document.querySelector('.header').offsetHeight;
-          const targetPosition = targetElement.offsetTop - headerHeight;
-          
-          window.scrollTo({
-            top: targetPosition,
-            behavior: 'smooth'
-          });
-        }
-      });
     });
+    
+    showAllBtn.textContent = isExpanded ? 'Mostrar Menos' : 'Mostrar Todas (16)';
+  });
+}
+
+// Header scroll effect
+const header = document.querySelector('.header');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 100) {
+    header.classList.add('scrolled');
+  } else {
+    header.classList.remove('scrolled');
   }
+});
 
-  // Active Navigation Highlighting
-  setupActiveNavigation() {
-    const sections = document.querySelectorAll('section[id]');
-    const navLinks = document.querySelectorAll('.menu a[href^="#"]');
+// Mobile menu toggle
+const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+const menu = document.querySelector('.menu');
 
-    if (sections.length === 0 || navLinks.length === 0) return;
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const activeId = entry.target.getAttribute('id');
-          
-          navLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href') === `#${activeId}`) {
-              link.classList.add('active');
-            }
-          });
-        }
-      });
-    }, {
-      threshold: 0.3,
-      rootMargin: '-80px 0px -80px 0px'
-    });
-
-    sections.forEach(section => {
-      observer.observe(section);
-    });
-  }
-
-  // Skills Toggle (Show All / Show Less)
-  setupSkillsToggle() {
-    const toggleButton = document.getElementById('show-all-tech');
-    const hiddenTechs = document.querySelectorAll('.hidden-tech');
-
-    if (toggleButton && hiddenTechs.length > 0) {
-      let isExpanded = false;
-
-      toggleButton.addEventListener('click', () => {
-        isExpanded = !isExpanded;
-        
-        hiddenTechs.forEach((tech, index) => {
-          if (isExpanded) {
-            setTimeout(() => {
-              tech.classList.add('show');
-            }, index * 100);
-          } else {
-            tech.classList.remove('show');
-          }
-        });
-
-        toggleButton.textContent = isExpanded ? 'Mostrar Menos' : 'Mostrar Todas';
-      });
+if (mobileMenuToggle) {
+  mobileMenuToggle.addEventListener('click', () => {
+    mobileMenuToggle.classList.toggle('active');
+    menu.classList.toggle('active');
+  });
+  
+  // Fechar menu ao clicar fora
+  document.addEventListener('click', (e) => {
+    if (!mobileMenuToggle.contains(e.target) && !menu.contains(e.target)) {
+      menu.classList.remove('active');
+      mobileMenuToggle.classList.remove('active');
     }
-  }
-
-  // Contact Form Handler
-  setupFormHandler() {
-    const contactForm = document.getElementById('contact-form');
-    
-    if (contactForm) {
-      contactForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        // Get form data
-        const formData = new FormData(contactForm);
-        const data = Object.fromEntries(formData);
-        
-        // Basic validation
-        if (!data.name || !data.email || !data.message) {
-          this.showNotification('Por favor, preencha todos os campos obrigatórios.', 'error');
-          return;
-        }
-
-        // Email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(data.email)) {
-          this.showNotification('Por favor, insira um email válido.', 'error');
-          return;
-        }
-
-        // Simulate form submission
-        this.simulateFormSubmission(data);
-      });
+  });
+  
+  // Fechar menu ao redimensionar tela
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+      menu.classList.remove('active');
+      mobileMenuToggle.classList.remove('active');
     }
-  }
+  });
+}
 
-  // Simulate form submission (replace with actual form handling)
-  simulateFormSubmission(data) {
-    const submitButton = document.querySelector('.send-btn');
-    const originalText = submitButton.textContent;
-    
-    // Show loading state
-    submitButton.textContent = 'Enviando...';
-    submitButton.disabled = true;
-    
-    // Simulate API call
-    setTimeout(() => {
-      // Reset button
-      submitButton.textContent = originalText;
-      submitButton.disabled = false;
-      
-      // Show success message
-      this.showNotification('Mensagem enviada com sucesso! Entrarei em contato em breve.', 'success');
-      
-      // Reset form
-      document.getElementById('contact-form').reset();
-    }, 2000);
-  }
+// Efeito de digitação melhorado
+const texts = ["Front-end Developer", "Estudante de SI", "Desenvolvedor Web"];
+const typingElement = document.getElementById("typing-text");
+let textIndex = 0;
+let charIndex = 0;
+let isDeleting = false;
 
-  // Notification System
-  showNotification(message, type = 'info') {
-    // Remove existing notifications
-    const existingNotification = document.querySelector('.notification');
-    if (existingNotification) {
-      existingNotification.remove();
-    }
-
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = `notification notification--${type}`;
-    notification.textContent = message;
-    
-    // Add styles
-    notification.style.cssText = `
-      position: fixed;
-      top: 100px;
-      right: 20px;
-      z-index: 10000;
-      padding: 15px 20px;
-      border-radius: 8px;
-      font-weight: 500;
-      box-shadow: var(--shadow-lg);
-      transform: translateX(100%);
-      transition: transform 0.3s ease;
-      max-width: 350px;
-    `;
-    
-    // Add type-specific styles
-    if (type === 'success') {
-      notification.style.background = '#10b981';
-      notification.style.color = '#ffffff';
-    } else if (type === 'error') {
-      notification.style.background = '#ef4444';
-      notification.style.color = '#ffffff';
+function typeText() {
+  const currentText = texts[textIndex];
+  
+  if (!isDeleting && charIndex < currentText.length) {
+    typingElement.textContent += currentText.charAt(charIndex);
+    charIndex++;
+    setTimeout(typeText, 100);
+  } 
+  else if (isDeleting && charIndex > 0) {
+    typingElement.textContent = currentText.substring(0, charIndex - 1);
+    charIndex--;
+    setTimeout(typeText, 50);
+  } 
+  else {
+    if (!isDeleting) {
+      isDeleting = true;
+      setTimeout(typeText, 2000);
     } else {
-      notification.style.background = 'var(--bg-card)';
-      notification.style.color = 'var(--text-primary)';
-      notification.style.border = '1px solid var(--border-color)';
-    }
-    
-    // Add to page
-    document.body.appendChild(notification);
-    
-    // Animate in
-    requestAnimationFrame(() => {
-      notification.style.transform = 'translateX(0)';
-    });
-    
-    // Remove after delay
-    setTimeout(() => {
-      notification.style.transform = 'translateX(100%)';
-      setTimeout(() => {
-        if (notification.parentNode) {
-          notification.parentNode.removeChild(notification);
-        }
-      }, 300);
-    }, 4000);
-  }
-
-  // Update current year in footer
-  updateCurrentYear() {
-    const yearElement = document.getElementById('ano-atual');
-    if (yearElement) {
-      yearElement.textContent = new Date().getFullYear();
+      isDeleting = false;
+      textIndex = (textIndex + 1) % texts.length;
+      setTimeout(typeText, 500);
     }
   }
 }
 
-// Initialize Portfolio when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-  new Portfolio();
+typeText();
+
+// Atualização do ano no footer
+document.addEventListener("DOMContentLoaded", () => {
+  const ano = new Date().getFullYear();
+  const anoElement = document.getElementById("ano-atual");
+  if (anoElement) {
+    anoElement.textContent = ano;
+  }
 });
+
+// Scroll suave melhorado
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      const headerHeight = document.querySelector('.header').offsetHeight;
+      const targetPosition = target.offsetTop - headerHeight - 20;
+      
+      window.scrollTo({
+        top: targetPosition,
+        behavior: 'smooth'
+      });
+      
+      // Fechar menu mobile se estiver aberto
+      if (menu.classList.contains('active')) {
+        menu.classList.remove('active');
+        mobileMenuToggle.classList.remove('active');
+      }
+    }
+  });
+});
+
+// Animações de entrada para elementos específicos
+const observerOptions = {
+  threshold: 0.15,
+  rootMargin: '0px 0px -80px 0px'
+};
+
+const fadeInObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      fadeInObserver.unobserve(entry.target);
+    }
+  });
+}, observerOptions);
+
+// Configurar elementos para animação de fade-in
+function setupFadeInAnimations() {
+  const elements = document.querySelectorAll('.project-card, .tech-card, .skill-item, .sobre-img, .sobre-conteudo, .summary-card');
+  elements.forEach(el => {
+    if (!el.classList.contains('fade-in')) {
+      el.classList.add('fade-in');
+      fadeInObserver.observe(el);
+    }
+  });
+}
+
+// Executar após carregamento completo
+document.addEventListener('DOMContentLoaded', setupFadeInAnimations);
+window.addEventListener('load', setupFadeInAnimations);
+
+// Animações das barras de progresso das skills
+// Animações especiais para tech cards
+const animateTechCards = () => {
+  const techCards = document.querySelectorAll('.tech-card');
+  
+  techCards.forEach((card, index) => {
+    setTimeout(() => {
+      card.style.opacity = '1';
+      card.style.transform = 'translateY(0) scale(1)';
+    }, index * 80);
+  });
+};
+
+// Observer para skills
+const skillsObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      setTimeout(() => animateTechCards(), 200);
+      skillsObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.2 });
+
+// Observar seção de skills
+document.addEventListener('DOMContentLoaded', () => {
+  const skillsSection = document.querySelector('.minhas-skills, .tech-showcase');
+  if (skillsSection) {
+    skillsObserver.observe(skillsSection);
+  }
+});
+
+// Efeito de hover nos cards de projeto e tech
+document.addEventListener('DOMContentLoaded', () => {
+  // Cards de projetos
+  const projectCards = document.querySelectorAll('.project-card, .projeto-card');
+  projectCards.forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      card.style.transform = 'translateY(-10px) scale(1.02)';
+      card.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.3)';
+    });
+    
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'translateY(0) scale(1)';
+      card.style.boxShadow = '';
+    });
+  });
+  
+  // Tech cards
+  const techCards = document.querySelectorAll('.tech-card');
+  techCards.forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      card.style.transform = 'translateY(-5px) scale(1.05)';
+    });
+    
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'translateY(0) scale(1)';
+    });
+  });
+});
+
+// Preloader simples
+window.addEventListener('load', () => {
+  document.body.classList.add('loaded');
+});
+
+// Destacar link ativo do menu conforme seção visível
+const sections = document.querySelectorAll('section[id]');
+const menuLinks = document.querySelectorAll('.menu a[href^="#"]');
+
+if (sections.length && menuLinks.length) {
+  const activeObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const id = entry.target.getAttribute('id');
+        menuLinks.forEach((link) => {
+          link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+        });
+      }
+    });
+  }, { threshold: 0.5 });
+
+  sections.forEach((sec) => activeObserver.observe(sec));
+}

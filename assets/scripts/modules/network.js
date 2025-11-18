@@ -1,232 +1,257 @@
+// Network Animation - Linhas conectando pontos
 class NetworkAnimation {
-  constructor(canvasId, options = {}) {
+  constructor(canvasId) {
     this.canvas = document.getElementById(canvasId);
     if (!this.canvas) return;
-
-    this.ctx = this.canvas.getContext('2d');
-    this.particles = [];
-    this.connections = [];
     
-    // Configurações padrão
-    this.config = {
-      particleCount: options.particleCount || 100,
-      maxDistance: options.maxDistance || 120,
-      particleSpeed: options.particleSpeed || 0.5,
-      particleSize: options.particleSize || 2,
-      connectionOpacity: options.connectionOpacity || 0.3,
-      particleOpacity: options.particleOpacity || 0.7,
-      ...options
-    };
-
-    this.mouse = { x: null, y: null };
+    this.ctx = this.canvas.getContext('2d');
+    this.points = [];
+    this.canvasId = canvasId;
+    
+    // Configurações baseadas na seção
+    this.setConfigForSection(canvasId);
+    
     this.animationId = null;
     
     this.init();
-    this.setupEventListeners();
+    this.bindEvents();
   }
-
+  
+  setConfigForSection(canvasId) {
+    // Configurações padrão
+    let config = {
+      maxDistance: 120,
+      pointCount: 50,
+      speed: 0.5
+    };
+    
+    // Ajustar por seção
+    if (canvasId.includes('sobre')) {
+      config = { maxDistance: 100, pointCount: 35, speed: 0.3 };
+    } else if (canvasId.includes('skills')) {
+      config = { maxDistance: 140, pointCount: 60, speed: 0.4 };
+    } else if (canvasId.includes('projetos')) {
+      config = { maxDistance: 110, pointCount: 40, speed: 0.6 };
+    } else if (canvasId.includes('contato')) {
+      config = { maxDistance: 90, pointCount: 30, speed: 0.25 };
+    }
+    
+    this.maxDistance = config.maxDistance;
+    this.pointCount = config.pointCount;
+    this.speed = config.speed;
+  }
+  
   init() {
     this.resizeCanvas();
-    this.createParticles();
+    this.createPoints();
     this.animate();
   }
-
+  
+  bindEvents() {
+    window.addEventListener('resize', () => this.resizeCanvas());
+    
+    // Pausar animação quando não visível
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        this.pause();
+      } else {
+        this.resume();
+      }
+    });
+    
+    // Observar mudanças de tema
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && 
+            (mutation.attributeName === 'data-theme' || mutation.attributeName === 'class')) {
+          // Tema mudou, forçar re-renderização
+          this.ctx.clearRect(0, 0, this.width, this.height);
+        }
+      });
+    });
+    
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme', 'class']
+    });
+    
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['data-theme', 'class']
+    });
+    
+    this.themeObserver = observer;
+  }
+  
   resizeCanvas() {
     const rect = this.canvas.getBoundingClientRect();
-    this.canvas.width = rect.width;
-    this.canvas.height = rect.height;
-  }
-
-  createParticles() {
-    this.particles = [];
+    this.canvas.width = rect.width * window.devicePixelRatio;
+    this.canvas.height = rect.height * window.devicePixelRatio;
+    this.canvas.style.width = rect.width + 'px';
+    this.canvas.style.height = rect.height + 'px';
     
-    for (let i = 0; i < this.config.particleCount; i++) {
-      this.particles.push({
-        x: Math.random() * this.canvas.width,
-        y: Math.random() * this.canvas.height,
-        vx: (Math.random() - 0.5) * this.config.particleSpeed,
-        vy: (Math.random() - 0.5) * this.config.particleSpeed,
-        size: Math.random() * this.config.particleSize + 1
+    this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    
+    this.width = rect.width;
+    this.height = rect.height;
+    
+    // Recriar pontos com novo tamanho
+    this.createPoints();
+  }
+  
+  createPoints() {
+    this.points = [];
+    
+    for (let i = 0; i < this.pointCount; i++) {
+      this.points.push({
+        x: Math.random() * this.width,
+        y: Math.random() * this.height,
+        vx: (Math.random() - 0.5) * this.speed,
+        vy: (Math.random() - 0.5) * this.speed,
+        size: Math.random() * 2 + 1
       });
     }
   }
-
-  updateParticles() {
-    this.particles.forEach(particle => {
-      particle.x += particle.vx;
-      particle.y += particle.vy;
-
+  
+  updatePoints() {
+    this.points.forEach(point => {
+      point.x += point.vx;
+      point.y += point.vy;
+      
       // Bounce off edges
-      if (particle.x < 0 || particle.x > this.canvas.width) {
-        particle.vx *= -1;
+      if (point.x < 0 || point.x > this.width) {
+        point.vx *= -1;
+        point.x = Math.max(0, Math.min(this.width, point.x));
       }
-      if (particle.y < 0 || particle.y > this.canvas.height) {
-        particle.vy *= -1;
+      
+      if (point.y < 0 || point.y > this.height) {
+        point.vy *= -1;
+        point.y = Math.max(0, Math.min(this.height, point.y));
       }
-
-      // Keep particles within bounds
-      particle.x = Math.max(0, Math.min(this.canvas.width, particle.x));
-      particle.y = Math.max(0, Math.min(this.canvas.height, particle.y));
     });
   }
-
-  drawParticles() {
-    const theme = document.documentElement.getAttribute('data-theme') || 'dark';
-    const particleColor = theme === 'light' ? '50, 50, 50' : '255, 255, 255';
-    
-    this.particles.forEach(particle => {
-      this.ctx.beginPath();
-      this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-      this.ctx.fillStyle = `rgba(${particleColor}, ${this.config.particleOpacity})`;
-      this.ctx.fill();
-    });
-  }
-
+  
   drawConnections() {
-    const theme = document.documentElement.getAttribute('data-theme') || 'dark';
-    const lineColor = theme === 'light' ? '100, 100, 100' : '255, 255, 255';
+    // Detectar tema atual - verificar múltiplas fontes para garantir detecção correta
+    const theme = document.documentElement.getAttribute('data-theme') || 
+                  document.body.getAttribute('data-theme') ||
+                  (document.documentElement.classList.contains('light-theme') ? 'light' : 'dark');
     
-    for (let i = 0; i < this.particles.length; i++) {
-      for (let j = i + 1; j < this.particles.length; j++) {
-        const dx = this.particles[i].x - this.particles[j].x;
-        const dy = this.particles[i].y - this.particles[j].y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-
-        if (distance < this.config.maxDistance) {
-          const opacity = (1 - distance / this.config.maxDistance) * this.config.connectionOpacity;
+    // Verificar se CSS tem cores claras ou escuras aplicadas
+    const bodyBg = getComputedStyle(document.body).backgroundColor;
+    const isLightTheme = bodyBg.includes('255') || bodyBg.includes('248') || theme === 'light';
+    
+    for (let i = 0; i < this.points.length; i++) {
+      for (let j = i + 1; j < this.points.length; j++) {
+        const pointA = this.points[i];
+        const pointB = this.points[j];
+        
+        const distance = Math.sqrt(
+          Math.pow(pointA.x - pointB.x, 2) + 
+          Math.pow(pointA.y - pointB.y, 2)
+        );
+        
+        if (distance < this.maxDistance) {
+          const opacity = 1 - (distance / this.maxDistance);
+          const alpha = opacity * 0.4;
           
           this.ctx.beginPath();
-          this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
-          this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
-          this.ctx.strokeStyle = `rgba(${lineColor}, ${opacity})`;
-          this.ctx.lineWidth = 0.5;
+          // Cores mais visíveis e consistentes
+          this.ctx.strokeStyle = isLightTheme 
+            ? `rgba(0, 0, 0, ${alpha})` 
+            : `rgba(255, 255, 255, ${alpha})`;
+          this.ctx.lineWidth = 0.8;
+          this.ctx.moveTo(pointA.x, pointA.y);
+          this.ctx.lineTo(pointB.x, pointB.y);
           this.ctx.stroke();
         }
       }
     }
   }
-
-  drawMouseConnections() {
-    if (this.mouse.x === null || this.mouse.y === null) return;
+  
+  drawPoints() {
+    // Detectar tema atual de forma robusta
+    const theme = document.documentElement.getAttribute('data-theme') || 
+                  document.body.getAttribute('data-theme') ||
+                  (document.documentElement.classList.contains('light-theme') ? 'light' : 'dark');
     
-    const theme = document.documentElement.getAttribute('data-theme') || 'dark';
-    const accentColor = theme === 'light' ? '0, 173, 111' : '0, 173, 111';
+    const bodyBg = getComputedStyle(document.body).backgroundColor;
+    const isLightTheme = bodyBg.includes('255') || bodyBg.includes('248') || theme === 'light';
     
-    this.particles.forEach(particle => {
-      const dx = this.mouse.x - particle.x;
-      const dy = this.mouse.y - particle.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
+    this.points.forEach(point => {
+      this.ctx.beginPath();
+      // Pontos mais visíveis
+      this.ctx.fillStyle = isLightTheme 
+        ? 'rgba(0, 0, 0, 0.7)' 
+        : 'rgba(255, 255, 255, 0.7)';
+      this.ctx.arc(point.x, point.y, point.size, 0, Math.PI * 2);
+      this.ctx.fill();
       
-      if (distance < this.config.maxDistance * 1.5) {
-        const opacity = (1 - distance / (this.config.maxDistance * 1.5)) * 0.6;
-        
-        this.ctx.beginPath();
-        this.ctx.moveTo(particle.x, particle.y);
-        this.ctx.lineTo(this.mouse.x, this.mouse.y);
-        this.ctx.strokeStyle = `rgba(${accentColor}, ${opacity})`;
-        this.ctx.lineWidth = 1;
-        this.ctx.stroke();
-      }
+      // Adicionar borda sutil para melhor visibilidade - tema escuro mais intenso
+      this.ctx.beginPath();
+      this.ctx.strokeStyle = isLightTheme 
+        ? 'rgba(0, 0, 0, 0.3)' 
+        : 'rgba(255, 255, 255, 0.5)';
+      this.ctx.lineWidth = isLightTheme ? 0.5 : 0.8;
+      this.ctx.arc(point.x, point.y, point.size + 0.5, 0, Math.PI * 2);
+      this.ctx.stroke();
     });
   }
-
+  
   animate() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.clearRect(0, 0, this.width, this.height);
     
-    this.updateParticles();
+    this.updatePoints();
     this.drawConnections();
-    this.drawParticles();
-    this.drawMouseConnections();
+    this.drawPoints();
     
     this.animationId = requestAnimationFrame(() => this.animate());
   }
-
-  setupEventListeners() {
-    // Mouse movement
-    this.canvas.addEventListener('mousemove', (e) => {
-      const rect = this.canvas.getBoundingClientRect();
-      this.mouse.x = e.clientX - rect.left;
-      this.mouse.y = e.clientY - rect.top;
-    });
-
-    this.canvas.addEventListener('mouseleave', () => {
-      this.mouse.x = null;
-      this.mouse.y = null;
-    });
-
-    // Resize observer
-    window.addEventListener('resize', () => {
-      this.resizeCanvas();
-      this.createParticles();
-    });
-
-    // Theme change observer
-    const observer = new MutationObserver(() => {
-      // Redraw on theme change
-    });
-    
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['data-theme']
-    });
-  }
-
-  destroy() {
+  
+  pause() {
     if (this.animationId) {
       cancelAnimationFrame(this.animationId);
+      this.animationId = null;
+    }
+  }
+  
+  resume() {
+    if (!this.animationId) {
+      this.animate();
+    }
+  }
+  
+  destroy() {
+    this.pause();
+    window.removeEventListener('resize', this.resizeCanvas);
+    
+    if (this.themeObserver) {
+      this.themeObserver.disconnect();
     }
   }
 }
 
-// Initialize network animations for all canvases
-document.addEventListener('DOMContentLoaded', () => {
-  // Main section
-  if (document.getElementById('network-canvas')) {
-    new NetworkAnimation('network-canvas', {
-      particleCount: 120,
-      maxDistance: 150,
-      particleSpeed: 0.3,
-      connectionOpacity: 0.4
-    });
-  }
+// Armazenar instâncias para evitar duplicação
+window.networkInstances = window.networkInstances || {};
 
-  // About section
-  if (document.getElementById('network-canvas-sobre')) {
-    new NetworkAnimation('network-canvas-sobre', {
-      particleCount: 80,
-      maxDistance: 120,
-      particleSpeed: 0.2,
-      connectionOpacity: 0.3
-    });
-  }
+// Função de inicialização
+function initNetworkAnimations() {
+  const networkCanvases = [
+    'network-canvas',
+    'network-canvas-sobre', 
+    'network-canvas-skills',
+    'network-canvas-projetos',
+    'network-canvas-contato'
+  ];
+  
+  networkCanvases.forEach(canvasId => {
+    const canvas = document.getElementById(canvasId);
+    if (canvas && !window.networkInstances[canvasId]) {
+      window.networkInstances[canvasId] = new NetworkAnimation(canvasId);
+    }
+  });
+}
 
-  // Skills section
-  if (document.getElementById('network-canvas-skills')) {
-    new NetworkAnimation('network-canvas-skills', {
-      particleCount: 90,
-      maxDistance: 130,
-      particleSpeed: 0.25,
-      connectionOpacity: 0.35
-    });
-  }
-
-  // Projects section
-  if (document.getElementById('network-canvas-projetos')) {
-    new NetworkAnimation('network-canvas-projetos', {
-      particleCount: 100,
-      maxDistance: 140,
-      particleSpeed: 0.3,
-      connectionOpacity: 0.4
-    });
-  }
-
-  // Contact section
-  if (document.getElementById('network-canvas-contato')) {
-    new NetworkAnimation('network-canvas-contato', {
-      particleCount: 70,
-      maxDistance: 110,
-      particleSpeed: 0.2,
-      connectionOpacity: 0.3
-    });
-  }
-});
+// Inicializar quando DOM estiver pronto
+document.addEventListener('DOMContentLoaded', initNetworkAnimations);
+window.addEventListener('load', initNetworkAnimations);

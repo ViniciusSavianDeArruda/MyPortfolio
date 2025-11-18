@@ -1,103 +1,125 @@
-class Tooltip {
+// Tooltip System
+class TooltipManager {
   constructor() {
-    this.elements = document.querySelectorAll('[title]');
+    this.isTooltipActive = false;
+    this.currentElement = null;
     this.init();
   }
 
   init() {
-    this.elements.forEach(element => {
-      this.setupTooltip(element);
+    this.createTooltipContainer();
+    this.bindEvents();
+  }
+
+  createTooltipContainer() {
+    if (!document.getElementById('tooltip')) {
+      const tooltip = document.createElement('div');
+      tooltip.id = 'tooltip';
+      tooltip.style.cssText = `
+        position: absolute;
+        background: rgba(0, 0, 0, 0.9);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 14px;
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        white-space: nowrap;
+      `;
+      document.body.appendChild(tooltip);
+    }
+  }
+
+  bindEvents() {
+    document.addEventListener('mouseover', (e) => {
+      const element = e.target.closest('[title], [data-tooltip]');
+      if (element && element !== this.currentElement) {
+        this.showTooltip(e, element);
+      }
+    });
+
+    document.addEventListener('mouseout', (e) => {
+      const element = e.target.closest('[title], [data-tooltip]');
+      if (element && element === this.currentElement) {
+        this.hideTooltip();
+      }
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      // Só atualizar posição se tooltip estiver ativo
+      if (this.isTooltipActive) {
+        this.updateTooltipPosition(e);
+      }
     });
   }
 
-  setupTooltip(element) {
-    const originalTitle = element.getAttribute('title');
+  showTooltip(event, element) {
+    const tooltip = document.getElementById('tooltip');
+    const text = element.getAttribute('data-tooltip') || element.getAttribute('title');
     
-    // Remove default tooltip
-    element.removeAttribute('title');
-    
-    // Store original title
-    element.setAttribute('data-tooltip', originalTitle);
-
-    element.addEventListener('mouseenter', (e) => {
-      this.showTooltip(e.target);
-    });
-
-    element.addEventListener('mouseleave', (e) => {
-      this.hideTooltip(e.target);
-    });
-  }
-
-  showTooltip(element) {
-    const tooltipText = element.getAttribute('data-tooltip');
-    if (!tooltipText) return;
-
-    const tooltip = document.createElement('div');
-    tooltip.className = 'custom-tooltip';
-    tooltip.textContent = tooltipText;
-    
-    document.body.appendChild(tooltip);
-
-    // Position tooltip
-    const rect = element.getBoundingClientRect();
-    const tooltipRect = tooltip.getBoundingClientRect();
-    
-    tooltip.style.left = rect.left + (rect.width / 2) - (tooltipRect.width / 2) + 'px';
-    tooltip.style.top = rect.top - tooltipRect.height - 10 + 'px';
-
-    // Add to element for cleanup
-    element._tooltip = tooltip;
-
-    // Animate in
-    requestAnimationFrame(() => {
-      tooltip.style.opacity = '1';
-      tooltip.style.transform = 'translateY(0)';
-    });
-  }
-
-  hideTooltip(element) {
-    const tooltip = element._tooltip;
-    if (tooltip) {
-      tooltip.style.opacity = '0';
-      tooltip.style.transform = 'translateY(5px)';
+    if (text) {
+      // Remover title para evitar tooltip nativo
+      if (element.getAttribute('title')) {
+        element.setAttribute('data-original-title', element.getAttribute('title'));
+        element.removeAttribute('title');
+      }
       
-      setTimeout(() => {
-        if (tooltip.parentNode) {
-          tooltip.parentNode.removeChild(tooltip);
-        }
-        element._tooltip = null;
-      }, 200);
+      this.currentElement = element;
+      this.isTooltipActive = true;
+      tooltip.textContent = text;
+      tooltip.style.opacity = '1';
+      this.updateTooltipPosition(event);
+    }
+  }
+
+  hideTooltip() {
+    const tooltip = document.getElementById('tooltip');
+    this.isTooltipActive = false;
+    this.currentElement = null;
+    tooltip.style.opacity = '0';
+    
+    // Restaurar title original
+    document.querySelectorAll('[data-original-title]').forEach(el => {
+      el.setAttribute('title', el.getAttribute('data-original-title'));
+      el.removeAttribute('data-original-title');
+    });
+  }
+
+  updateTooltipPosition(event) {
+    const tooltip = document.getElementById('tooltip');
+    if (this.isTooltipActive && tooltip.style.opacity === '1') {
+      const x = event.pageX + 10;
+      const y = event.pageY - 35;
+      
+      // Garantir que o tooltip não saia da tela
+      const tooltipRect = tooltip.getBoundingClientRect();
+      const maxX = window.innerWidth - tooltipRect.width - 10;
+      const maxY = window.innerHeight - tooltipRect.height - 10;
+      
+      tooltip.style.left = Math.min(x, maxX) + 'px';
+      tooltip.style.top = Math.max(y, 10) + 'px';
     }
   }
 }
 
-// Add CSS for custom tooltips
-const tooltipStyles = `
-  .custom-tooltip {
-    position: fixed;
-    z-index: 10000;
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 500;
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--border-color);
-    opacity: 0;
-    transform: translateY(5px);
-    transition: all 0.2s ease;
-    pointer-events: none;
-    white-space: nowrap;
+// Função de inicialização - DESABILITADA TEMPORARIAMENTE
+function initTooltip() {
+  // Remove qualquer tooltip existente que possa estar causando problemas
+  const existingTooltip = document.getElementById('tooltip');
+  if (existingTooltip) {
+    existingTooltip.remove();
   }
-`;
+  
+  console.log('Tooltip system disabled - existing tooltips removed');
+  return;
+  
+  if (!window.tooltipManager) {
+    window.tooltipManager = new TooltipManager();
+  }
+}
 
-// Add styles to document
-const styleSheet = document.createElement('style');
-styleSheet.textContent = tooltipStyles;
-document.head.appendChild(styleSheet);
-
-// Initialize tooltips
-document.addEventListener('DOMContentLoaded', () => {
-  new Tooltip();
-});
+// Executar limpeza na inicialização
+document.addEventListener('DOMContentLoaded', initTooltip);
+window.addEventListener('load', initTooltip);
